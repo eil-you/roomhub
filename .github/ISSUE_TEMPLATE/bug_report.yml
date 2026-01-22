@@ -1,0 +1,35 @@
+name: 🐛 Bug Report
+description: 버그를 보고하여 프로젝트 개선에 도움을 주세요.
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: 🙄 버그에 대한 설명
+      description: 어떤 버그인지 명확하고 간결하게 설명해주세요.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: 👣 재현 방법
+      description: 버그를 어떻게 재현할 수 있는지 단계별로 설명해주세요.
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: 🤔 예상 결과
+      description: 원래 어떤 결과가 나와야 했는지 설명해주세요.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: 💻 환경 정보
+      description: OS 버전, Java 버전 등 기술적인 환경을 적어주세요.
