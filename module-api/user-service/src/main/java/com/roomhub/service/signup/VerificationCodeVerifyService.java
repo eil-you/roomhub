@@ -15,8 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor()
 public class VerificationCodeVerifyService {
@@ -37,7 +35,7 @@ public class VerificationCodeVerifyService {
                 .orElseThrow(() -> new RoomHubException(ErrorCode.CODE_IS_EMPTY));
 
         if (!verificationCodePolicyService.isVerificationCodeValid(vc)) {
-            throw new RoomHubException(ErrorCode.CODE_EXPRIRED);
+            throw new RoomHubException(ErrorCode.CODE_EXPIRED);
         }
 
         if (!isCodeMatch(vc, code)) {
@@ -57,7 +55,7 @@ public class VerificationCodeVerifyService {
         try {
             verifyResponse.setEncryptedKey(AES256Util.encrypt(secretKey, phoneNumber));
         } catch (Exception e) {
-            throw new RoomHubException(ErrorCode.PHONENUMBER_FALID_ENCRYPT);
+            throw new RoomHubException(ErrorCode.PHONENUMBER_FAILED_ENCRYPT);
         }
 
         return verifyResponse;
