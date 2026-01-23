@@ -29,14 +29,14 @@ public class SendVerificationCodeService {
 
         // Rate limiting: 1분 이내 동일 번호 발송 제한
         if (redisUtil.getData("SMS_LIMIT:" + phoneNumber) != null) {
-            throw new RoomHubException(ErrorCode.PHONENUMBER_COOLDAWN);
+            throw new RoomHubException(ErrorCode.PHONENUMBER_COOLDOWN);
         }
 
         Optional<Verification> optionalVC = verificationRepository.findVerificationByPhoneNumber(phoneNumber);
 
         if (optionalVC.isPresent()) {
             if (!verificationCodePolicyService.isResendableAllowd(optionalVC.get())) {
-                throw new RoomHubException(ErrorCode.TERM_IS_EMPTY);
+                throw new RoomHubException(ErrorCode.RESEND_COOLDOWN);
             }
         }
 

@@ -139,7 +139,7 @@ class SubmitServiceTest {
                 // when & then
                 RoomHubException exception = assertThrows(RoomHubException.class,
                                 () -> submitService.socialSubmit(email, request));
-                assertEquals(ErrorCode.PHONENUMBER_COOLDAWN.getCode(), exception.getCode());
+                assertEquals(ErrorCode.PHONENUMBER_COOLDOWN.getCode(), exception.getCode());
         }
 
         @Test

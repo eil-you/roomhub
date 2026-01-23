@@ -3,39 +3,44 @@ package com.roomhub.exception;
 import com.roomhub.model.ErrorCode;
 import lombok.Getter;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 @Getter
 public class RoomHubException extends RuntimeException {
-    private final int code;
-    private final String message;
+    private final ErrorCode errorCode;
     private final Map<String, Object> parameters;
-    private Exception rootCause;
 
-    public RoomHubException(ErrorCode code, Map<String, Object> parameters) {
-        this.code = code.getCode();
-        this.message = code.getMessage();
-        this.parameters = parameters;
+    public RoomHubException(ErrorCode errorCode) {
+        this(errorCode, Collections.emptyMap(), null);
     }
 
-    public RoomHubException(ErrorCode code) {
-        this.code = code.getCode();
-        this.message = code.getMessage();
-        this.parameters = new HashMap<>();
+    public RoomHubException(ErrorCode errorCode, String message) {
+        super(message);
+        this.errorCode = errorCode;
+        this.parameters = Collections.emptyMap();
     }
 
-    public RoomHubException(ErrorCode code, Exception rootCause) {
-        this.code = code.getCode();
-        this.message = code.getMessage();
-        this.parameters = new HashMap<>();
-        this.rootCause = rootCause;
+    public RoomHubException(ErrorCode errorCode, Map<String, Object> parameters) {
+        this(errorCode, parameters, null);
     }
 
-    public RoomHubException(ErrorCode code, Map<String, Object> parameters, Exception rootCause) {
-        this.code = code.getCode();
-        this.message = code.getMessage();
-        this.parameters = parameters;
-        this.rootCause = rootCause;
+    public RoomHubException(ErrorCode errorCode, Throwable cause) {
+        this(errorCode, Collections.emptyMap(), cause);
+    }
+
+    public RoomHubException(ErrorCode errorCode, Map<String, Object> parameters, Throwable cause) {
+        super(errorCode.getMessage(), cause);
+        this.errorCode = errorCode;
+        this.parameters = parameters != null ? parameters : Collections.emptyMap();
+    }
+
+    public int getCode() {
+        return errorCode.getCode();
+    }
+
+    @Override
+    public String getMessage() {
+        return errorCode.getMessage();
     }
 }
