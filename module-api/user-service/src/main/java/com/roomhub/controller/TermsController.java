@@ -1,5 +1,6 @@
 package com.roomhub.controller;
 
+import com.roomhub.model.CommonResponse;
 import com.roomhub.model.RegisterTermRequest;
 import com.roomhub.model.ReviseTermRequest;
 import com.roomhub.service.terms.TermsService;
@@ -11,22 +12,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/v1/terms")
-@RequiredArgsConstructor()
+@RequiredArgsConstructor
 public class TermsController {
 
-    private final TermsService registerTermService;
+    private static final int SUCCESS_CODE = 0;
+    private final TermsService termsService;
 
     @PostMapping("/register")
-    public void registerTerm(@RequestBody RegisterTermRequest registerTermRequest) {
+    public CommonResponse<Void> registerTerm(@RequestBody RegisterTermRequest registerTermRequest) {
         registerTermRequest.check();
-        registerTermService.registerTerm(registerTermRequest);
+        termsService.registerTerm(registerTermRequest);
+        return new CommonResponse<>(SUCCESS_CODE, "Term registered successfully", null);
     }
 
-    @PostMapping("/revice")
-    public void reviceTerm(@RequestBody ReviseTermRequest reviseTermRequest) {
+    @PostMapping("/revise")
+    public CommonResponse<Void> reviseTerm(@RequestBody ReviseTermRequest reviseTermRequest) {
         reviseTermRequest.check();
-        registerTermService.reviceTerm(reviseTermRequest);
-
+        termsService.reviseTerm(reviseTermRequest);
+        return new CommonResponse<>(SUCCESS_CODE, "Term revised successfully", null);
     }
 
 }

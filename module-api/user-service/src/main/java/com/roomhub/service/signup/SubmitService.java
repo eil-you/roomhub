@@ -44,8 +44,9 @@ public class SubmitService {
         isFormatValid(signupForm, phoneNumber);
 
         // 필수 약관 체크
-        if (!areRequiredTermsChecked(signupForm.termIds()))
+        if (!areRequiredTermsChecked(signupForm.termIds())) {
             throw new RoomHubException(ErrorCode.REQUIRED_TERMS_CHECKED);
+        }
 
         // db저장
         saveUserAndAgreement(signupForm, phoneNumber);
@@ -53,19 +54,20 @@ public class SubmitService {
 
     // 파라미터 NOT NULL, 유효성 검증
     public void isFormatValid(SubmitRequest signupForm, String phoneNumber) {
-
         // phoneNumber
-        if (!isVerifiedPhoneNumber(phoneNumber))
-            throw new RoomHubException(ErrorCode.PHONENUMBER_COOLDAWN);
+        if (!isVerifiedPhoneNumber(phoneNumber)) {
+            throw new RoomHubException(ErrorCode.PHONENUMBER_COOLDOWN);
+        }
 
         // email
-        if (isEmailExist(signupForm.email()))
+        if (isEmailExist(signupForm.email())) {
             throw new RoomHubException(ErrorCode.ALREADY_REGISTERED);
+        }
 
         // nickname
-        if (isNicknameExist(signupForm.nickname()))
+        if (isNicknameExist(signupForm.nickname())) {
             throw new RoomHubException(ErrorCode.NICKNAME_IS_DUPLICATE);
-
+        }
     }
 
     // 닉네임 존재 여부 판단
@@ -80,15 +82,11 @@ public class SubmitService {
 
     // 전화번호 복호화
     public String decryptPhoneNumber(String encryptedKey) {
-        String phoneNumber;
-
         try {
-            phoneNumber = AES256Util.decrypt(secretKey, encryptedKey);
-
+            return AES256Util.decrypt(secretKey, encryptedKey);
         } catch (Exception e) {
-            throw new RuntimeException("전화번호 복호화 실패", e);
+            throw new RoomHubException(ErrorCode.PHONENUMBER_FAILED_DECRYPT, e);
         }
-        return phoneNumber;
     }
 
     /*
@@ -98,22 +96,16 @@ public class SubmitService {
         boolean used = true;
 
         return verificationRepository.findVerificationByPhoneNumberAndUsed(phoneNumber, used)
-                .map(v -> {
-                    return v.getSendTime().isAfter(LocalDateTime.now().minusHours(1));
-
-                })
+                .map(v -> v.getSendTime().isAfter(LocalDateTime.now().minusHours(1)))
                 .orElse(false);
-
     }
 
     /*
      * 필수 약관 체크
      */
     public boolean areRequiredTermsChecked(List<TermId> userTerms) {
-
-        List<TermId> requiredsTerms = termRepository.findAllByRequiredAndActive(true, true);
-
-        return userTerms != null && userTerms.containsAll(requiredsTerms);
+        List<TermId> requiredTerms = termRepository.findAllByRequiredAndActive(true, true);
+        return userTerms != null && userTerms.containsAll(requiredTerms);
     }
 
     /* 회원 가입 db 저장 및 agreement db 저장 */
@@ -128,7 +120,7 @@ public class SubmitService {
 
         log.info("New user registered: {}", savedUser.getEmail());
 
-        List<Agreement> agreements = Agreement.of(0, savedUser.getId(), submitRequest.termIds(), Status.AGREED);
+        List<Agreement> agreements = Agreement.of(savedUser.getId(), submitRequest.termIds(), Status.AGREED);
         agreementRepository.saveAll(agreements);
     }
 
@@ -142,7 +134,7 @@ public class SubmitService {
         }
 
         if (!isVerifiedPhoneNumber(phoneNumber)) {
-            throw new RoomHubException(ErrorCode.PHONENUMBER_COOLDAWN);
+            throw new RoomHubException(ErrorCode.PHONENUMBER_COOLDOWN);
         }
 
         if (!areRequiredTermsChecked(socialSignupRequest.termIds())) {
@@ -158,7 +150,7 @@ public class SubmitService {
         user.setNickname(socialSignupRequest.nickname());
         userRepository.save(user);
 
-        List<Agreement> agreements = Agreement.of(0, user.getId(), socialSignupRequest.termIds(), Status.AGREED);
+        List<Agreement> agreements = Agreement.of(user.getId(), socialSignupRequest.termIds(), Status.AGREED);
         agreementRepository.saveAll(agreements);
     }
 }

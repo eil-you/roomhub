@@ -2,7 +2,6 @@ package com.roomhub.entity;
 
 import com.roomhub.model.RegisterTermRequest;
 import com.roomhub.model.ReviseTermRequest;
-import com.roomhub.model.Status;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Term extends baseTimeEntity {
+public class Term extends BaseTimeEntity {
 
     @EmbeddedId
     private TermId id;

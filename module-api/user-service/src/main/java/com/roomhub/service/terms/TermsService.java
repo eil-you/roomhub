@@ -16,16 +16,12 @@ public class TermsService {
 
     @Transactional
     public void registerTerm(RegisterTermRequest registerTermRequest) {
-
         termRepository.save(new Term(registerTermRequest));
-
     }
 
     @Transactional
-    public void reviceTerm(ReviseTermRequest reviseTermRequest) {
-
+    public void reviseTerm(ReviseTermRequest reviseTermRequest) {
         Term updateTerm = new Term(reviseTermRequest);
-
         termRepository.save(updateTerm);
     }
 
