@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
-public class User extends baseTimeEntity {
+public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,7 +49,6 @@ public class User extends baseTimeEntity {
 
     // Email용 생성자
     public User(SubmitRequest dto, String phoneNumber) {
-        this.id = 0;
         this.email = dto.email();
         this.password = dto.password();
         this.birth = dto.birth();

@@ -1,12 +1,8 @@
 package com.roomhub.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +10,7 @@ import java.time.LocalDateTime;
 @Table(name = "verification")
 @Getter
 @Setter
-public class Verification extends baseTimeEntity {
+public class Verification extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
