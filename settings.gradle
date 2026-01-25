@@ -2,5 +2,6 @@ rootProject.name = 'roomhub'
 
 include 'module-common'
 include 'module-api:user-service'
+include 'module-api:reservation-service'
 include 'module-infra:gateway-service'
 include 'module-infra:discovery-service'
