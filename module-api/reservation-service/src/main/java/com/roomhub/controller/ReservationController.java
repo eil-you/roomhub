@@ -15,12 +15,19 @@ import java.util.List;
 public class ReservationController {
 
     private final ReservationService reservationService;
-    
+
     // 예약 생성
     @PostMapping
     public ResponseEntity<String> createReservation(@RequestBody ReservationRequest reservationRequest) {
         reservationService.createReservation(reservationRequest);
         return ResponseEntity.ok("Reservation created successfully");
+    }
+
+    // 예약 확정
+    @PutMapping("/{reservationId}/confirm")
+    public ResponseEntity<String> confirmReservation(@PathVariable Long reservationId) {
+        reservationService.confirmReservation(reservationId);
+        return ResponseEntity.ok("Reservation confirmed successfully");
     }
 
     // 사용자별 전체 예약 리스트 조회
