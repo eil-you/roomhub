@@ -42,6 +42,32 @@ services:
       discovery-service:
         condition: service_started
 
+  reservation-service:
+    build:
+      context: .
+      args:
+        SERVICE_PATH: :module-api:reservation-service
+        JAR_PATH: module-api/reservation-service
+    ports:
+      - "8081:8081"
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/roomhub?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: roomuser
+      SPRING_DATASOURCE_PASSWORD: roompass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      EUREKA_URL: http://discovery-service:8761/eureka/
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      discovery-service:
+        condition: service_started
+
   gateway-service:
     build:
       context: .
