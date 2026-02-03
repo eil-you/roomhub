@@ -20,9 +20,36 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final RoomInventoryRepository roomInventoryRepository;
+    private final org.redisson.api.RedissonClient redissonClient;
+
+    private static final String LOCK_KEY_PREFIX = "reservation_lock:";
+
+    public void createReservation(ReservationRequest reservationRequest) {
+        String lockKey = LOCK_KEY_PREFIX + reservationRequest.roomId();
+        org.redisson.api.RLock lock = redissonClient.getLock(lockKey);
+
+        try {
+            // 락 획득 시도 (최대 5초 대기, 락 획득 후 10초간 유지)
+            boolean available = lock.tryLock(5, 10, java.util.concurrent.TimeUnit.SECONDS);
+            if (!available) {
+                throw new RoomHubException(ReservationErrorCode.CONCURRENCY_ERROR);
+            }
+
+            // 실제 비즈니스 로직 수행
+            processReservation(reservationRequest);
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RoomHubException(ReservationErrorCode.SYSTEM_ERROR);
+        } finally {
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
+        }
+    }
 
     @Transactional
-    public void createReservation(ReservationRequest reservationRequest) {
+    public void processReservation(ReservationRequest reservationRequest) {
         // 1. 예약 기간 내의 모든 날짜별 재고 조회
         List<RoomInventory> roomInventories = roomInventoryRepository
                 .findAllByRoomIdAndDateBetween(
@@ -43,6 +70,19 @@ public class ReservationService {
 
         // 4. 예약 저장
         reservationRepository.save(reservationRequest.toEntity());
+    }
+
+    // 예약 확정 (PENDING -> CONFIRMED)
+    @Transactional
+    public void confirmReservation(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new RoomHubException(ReservationErrorCode.RESERVATION_NOT_FOUND));
+
+        if (reservation.getStatus() != ReservationStatus.PENDING) {
+            throw new RoomHubException(ReservationErrorCode.INVALID_DATE);
+        }
+
+        reservation.updateStatus(ReservationStatus.CONFIRMED);
     }
 
     // 예약 취소
