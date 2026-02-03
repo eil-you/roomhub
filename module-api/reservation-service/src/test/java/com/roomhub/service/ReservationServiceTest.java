@@ -18,6 +18,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,6 +38,12 @@ class ReservationServiceTest {
         @Mock
         private RoomInventoryRepository roomInventoryRepository;
 
+        @Mock
+        private org.redisson.api.RedissonClient redissonClient;
+
+        @Mock
+        private org.redisson.api.RLock lock;
+
         @InjectMocks
         private ReservationService reservationService;
 
@@ -47,6 +57,13 @@ class ReservationServiceTest {
                 RoomInventory inventory1 = RoomInventory.builder().roomId(1L).date(LocalDate.now()).stock(1).build();
                 RoomInventory inventory2 = RoomInventory.builder().roomId(1L).date(LocalDate.now().plusDays(1)).stock(2)
                                 .build();
+
+                given(redissonClient.getLock(anyString())).willReturn(lock);
+                try {
+                        given(lock.tryLock(anyLong(), anyLong(), any())).willReturn(true);
+                } catch (InterruptedException e) {
+                        e.printStackTrace();
+                }
 
                 given(roomInventoryRepository.findAllByRoomIdAndDateBetween(anyLong(), any(),
                                 any()))
@@ -71,6 +88,13 @@ class ReservationServiceTest {
                 RoomInventory inventory1 = RoomInventory.builder().roomId(1L).date(LocalDate.now()).stock(1).build();
                 RoomInventory inventory2 = RoomInventory.builder().roomId(1L).date(LocalDate.now().plusDays(1)).stock(0)
                                 .build();
+
+                given(redissonClient.getLock(anyString())).willReturn(lock);
+                try {
+                        given(lock.tryLock(anyLong(), anyLong(), any())).willReturn(true);
+                } catch (InterruptedException e) {
+                        e.printStackTrace();
+                }
 
                 given(roomInventoryRepository.findAllByRoomIdAndDateBetween(anyLong(), any(),
                                 any()))
@@ -159,5 +183,57 @@ class ReservationServiceTest {
                 // then
                 assertEquals(1, results.size());
                 assertEquals(userId, results.get(0).getUserId());
+        }
+
+        @Test
+        @DisplayName("동시성 테스트 - 100개의 요청이 동시에 올 때 1개만 성공해야 함")
+        void createReservation_Concurrency_Test() throws InterruptedException {
+                // given
+                int threadCount = 100;
+                ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+                CountDownLatch latch = new CountDownLatch(threadCount);
+
+                ReservationRequest request = new ReservationRequest(1L, 1L, LocalDate.now(),
+                                LocalDate.now().plusDays(1), 100000);
+
+                // 1. 락 설정: 첫 번째 시도만 true, 나머지는 false 반환하도록 설정
+                given(redissonClient.getLock(anyString())).willReturn(lock);
+                try {
+                        given(lock.tryLock(anyLong(), anyLong(), any()))
+                                        .willReturn(true) // 1등 성공
+                                        .willReturn(false); // 나머지는 모두 실패
+                } catch (InterruptedException e) {
+                        e.printStackTrace();
+                }
+
+                // 2. 재고 설정 (방이 1개 있는 상태)
+                RoomInventory inventory = RoomInventory.builder().roomId(1L).date(LocalDate.now()).stock(1).build();
+                given(roomInventoryRepository.findAllByRoomIdAndDateBetween(anyLong(), any(), any()))
+                                .willReturn(List.of(inventory));
+
+                AtomicInteger successCount = new AtomicInteger();
+                AtomicInteger failCount = new AtomicInteger();
+
+                // when
+                for (int i = 0; i < threadCount; i++) {
+                        executorService.submit(() -> {
+                                try {
+                                        reservationService.createReservation(request);
+                                        successCount.incrementAndGet();
+                                } catch (RoomHubException e) {
+                                        if (e.getErrorCode() == ReservationErrorCode.CONCURRENCY_ERROR) {
+                                                failCount.incrementAndGet();
+                                        }
+                                } finally {
+                                        latch.countDown();
+                                }
+                        });
+                }
+                latch.await();
+
+                // then
+                assertEquals(1, successCount.get(), "단 한 명의 사용자만 예약에 성공해야 함");
+                assertEquals(threadCount - 1, failCount.get(), "나머지 99명은 락 획득 실패(Concurrency Error)가 발생해야 함");
+                verify(reservationRepository, times(1)).save(any());
         }
 }
