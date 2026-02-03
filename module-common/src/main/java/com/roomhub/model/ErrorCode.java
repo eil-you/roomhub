@@ -3,10 +3,11 @@ package com.roomhub.model;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 
 @AllArgsConstructor
 @Getter
-public enum ErrorCode {
+public enum ErrorCode implements BaseErrorCode {
 
     EMAIL_NOT_VALID(1001, "Email not valid", HttpStatus.BAD_REQUEST),
     EMAIL_FROM_IS_EMPTY(1002, "Email from is empty", HttpStatus.BAD_REQUEST),
@@ -43,6 +44,7 @@ public enum ErrorCode {
 
     private final int code;
     private final String message;
+    @NonNull
     private final HttpStatus httpStatus;
 
 }

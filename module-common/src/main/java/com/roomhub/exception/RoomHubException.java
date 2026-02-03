@@ -1,35 +1,37 @@
 package com.roomhub.exception;
 
-import com.roomhub.model.ErrorCode;
+import com.roomhub.model.BaseErrorCode;
 import lombok.Getter;
+import org.springframework.lang.NonNull;
 
 import java.util.Collections;
 import java.util.Map;
 
 @Getter
 public class RoomHubException extends RuntimeException {
-    private final ErrorCode errorCode;
+    @NonNull
+    private final BaseErrorCode errorCode;
     private final Map<String, Object> parameters;
 
-    public RoomHubException(ErrorCode errorCode) {
+    public RoomHubException(@NonNull BaseErrorCode errorCode) {
         this(errorCode, Collections.emptyMap(), null);
     }
 
-    public RoomHubException(ErrorCode errorCode, String message) {
+    public RoomHubException(@NonNull BaseErrorCode errorCode, String message) {
         super(message);
         this.errorCode = errorCode;
         this.parameters = Collections.emptyMap();
     }
 
-    public RoomHubException(ErrorCode errorCode, Map<String, Object> parameters) {
+    public RoomHubException(@NonNull BaseErrorCode errorCode, Map<String, Object> parameters) {
         this(errorCode, parameters, null);
     }
 
-    public RoomHubException(ErrorCode errorCode, Throwable cause) {
+    public RoomHubException(@NonNull BaseErrorCode errorCode, Throwable cause) {
         this(errorCode, Collections.emptyMap(), cause);
     }
 
-    public RoomHubException(ErrorCode errorCode, Map<String, Object> parameters, Throwable cause) {
+    public RoomHubException(@NonNull BaseErrorCode errorCode, Map<String, Object> parameters, Throwable cause) {
         super(errorCode.getMessage(), cause);
         this.errorCode = errorCode;
         this.parameters = parameters != null ? parameters : Collections.emptyMap();

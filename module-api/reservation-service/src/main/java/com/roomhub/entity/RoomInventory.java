@@ -2,6 +2,7 @@ package com.roomhub.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,4 +31,18 @@ public class RoomInventory extends BaseTimeEntity {
     @Column(nullable = false, columnDefinition = "int default 0")
     private int stock;
 
+    @Builder
+    public RoomInventory(long roomId, LocalDate date, int stock) {
+        this.roomId = roomId;
+        this.date = date;
+        this.stock = stock;
+    }
+
+    public void decreaseStock() {
+        this.stock = this.stock - 1;
+    }
+
+    public void increaseStock() {
+        this.stock = this.stock + 1;
+    }
 }
