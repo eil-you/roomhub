@@ -3,7 +3,7 @@ package com.roomhub.service.signup;
 import com.roomhub.entity.User;
 import com.roomhub.entity.Verification;
 import com.roomhub.exception.RoomHubException;
-import com.roomhub.model.ErrorCode;
+import com.roomhub.model.UserErrorCode;
 import com.roomhub.model.VerifyRequest;
 import com.roomhub.model.VerifyResponse;
 import com.roomhub.repository.UserRepository;
@@ -133,6 +133,6 @@ class VerificationCodeVerifyServiceTest {
         // when & then
         RoomHubException exception = assertThrows(RoomHubException.class,
                 () -> verificationCodeVerifyService.verifyCode(request));
-        assertEquals(ErrorCode.ALREADY_REGISTERED.getCode(), exception.getCode());
+        assertEquals(UserErrorCode.ALREADY_REGISTERED.getCode(), exception.getCode());
     }
 }
