@@ -2,7 +2,7 @@ package com.roomhub.service.signup;
 
 import com.roomhub.entity.Verification;
 import com.roomhub.exception.RoomHubException;
-import com.roomhub.model.ErrorCode;
+import com.roomhub.model.UserErrorCode;
 import com.roomhub.repository.VerificationRepository;
 import com.roomhub.util.RedisUtil;
 import com.roomhub.util.ValidationUtil;
@@ -29,14 +29,14 @@ public class SendVerificationCodeService {
 
         // Rate limiting: 1분 이내 동일 번호 발송 제한
         if (redisUtil.getData("SMS_LIMIT:" + phoneNumber) != null) {
-            throw new RoomHubException(ErrorCode.PHONENUMBER_COOLDOWN);
+            throw new RoomHubException(UserErrorCode.PHONENUMBER_COOLDOWN);
         }
 
         Optional<Verification> optionalVC = verificationRepository.findVerificationByPhoneNumber(phoneNumber);
 
         if (optionalVC.isPresent()) {
             if (!verificationCodePolicyService.isResendableAllowd(optionalVC.get())) {
-                throw new RoomHubException(ErrorCode.RESEND_COOLDOWN);
+                throw new RoomHubException(UserErrorCode.RESEND_COOLDOWN);
             }
         }
 

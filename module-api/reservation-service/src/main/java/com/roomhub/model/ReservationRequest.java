@@ -15,7 +15,7 @@ public record ReservationRequest(
     @Override
     public void check() {
         if (userId == null || roomId == null) {
-            throw new RoomHubException(ErrorCode.USER_NOT_FOUND);
+            throw new RoomHubException(ErrorCode.INVALID_INPUT_VALUE);
         }
         if (checkOutDate.isBefore(checkInDate) || checkOutDate.isEqual(checkInDate)) {
             throw new RoomHubException(ReservationErrorCode.INVALID_DATE);

@@ -22,29 +22,29 @@ public record SubmitRequest(
     @Override
     public void check() {
         if (this == null)
-            throw new RoomHubException(ErrorCode.EMAIL_FROM_IS_EMPTY);
+            throw new RoomHubException(UserErrorCode.EMAIL_FROM_IS_EMPTY);
         // 이메일 검사
         String regex = "^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$";
         if (email == null || !email.matches(regex))
-            throw new RoomHubException(ErrorCode.EMAIL_NOT_VALID, Map.of("email", email));
+            throw new RoomHubException(UserErrorCode.EMAIL_NOT_VALID, Map.of("email", email));
 
         // 비밀 번호 체크
         ValidationUtil.checkPassword(password);
         // gender
         if (gender == null)
-            throw new RoomHubException(ErrorCode.GENDER_IS_EMPTY);
+            throw new RoomHubException(UserErrorCode.GENDER_IS_EMPTY);
         // birth
         if (birth == null || birth.isAfter(LocalDate.now()))
-            throw new RoomHubException(ErrorCode.BIRTH_NOT_VALID, Map.of("birth", birth));
+            throw new RoomHubException(UserErrorCode.BIRTH_NOT_VALID, Map.of("birth", birth));
         // nickname
         if (nickname == null)
-            throw new RoomHubException(ErrorCode.NICKNAME_IS_EMPTY);
+            throw new RoomHubException(UserErrorCode.NICKNAME_IS_EMPTY);
         // terms
         if (termIds == null || termIds.size() == 0)
-            throw new RoomHubException(ErrorCode.TERMIDS_IS_EMPTY);
+            throw new RoomHubException(UserErrorCode.TERMIDS_IS_EMPTY);
         // encryptedKey
         if (encryptedKey == null)
-            throw new RoomHubException(ErrorCode.ENCRYPTED_KEY_IS_EMPTY);
+            throw new RoomHubException(UserErrorCode.ENCRYPTED_KEY_IS_EMPTY);
 
     }
 }

@@ -18,14 +18,14 @@ public record SocialSignupRequest(
     @Override
     public void check() {
         if (gender == null)
-            throw new RoomHubException(ErrorCode.GENDER_IS_EMPTY);
+            throw new RoomHubException(UserErrorCode.GENDER_IS_EMPTY);
         if (birth == null || birth.isAfter(LocalDate.now()))
-            throw new RoomHubException(ErrorCode.BIRTH_NOT_VALID, Map.of("birth", birth));
+            throw new RoomHubException(UserErrorCode.BIRTH_NOT_VALID, Map.of("birth", birth));
         if (nickname == null)
-            throw new RoomHubException(ErrorCode.NICKNAME_IS_EMPTY);
+            throw new RoomHubException(UserErrorCode.NICKNAME_IS_EMPTY);
         if (termIds == null || termIds.isEmpty())
-            throw new RoomHubException(ErrorCode.TERMIDS_IS_EMPTY);
+            throw new RoomHubException(UserErrorCode.TERMIDS_IS_EMPTY);
         if (encryptedKey == null)
-            throw new RoomHubException(ErrorCode.ENCRYPTED_KEY_IS_EMPTY);
+            throw new RoomHubException(UserErrorCode.ENCRYPTED_KEY_IS_EMPTY);
     }
 }
