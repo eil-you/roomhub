@@ -4,7 +4,7 @@ import com.roomhub.entity.TermId;
 import com.roomhub.entity.User;
 import com.roomhub.entity.Verification;
 import com.roomhub.exception.RoomHubException;
-import com.roomhub.model.ErrorCode;
+import com.roomhub.model.UserErrorCode;
 import com.roomhub.model.Gender;
 import com.roomhub.model.Role;
 import com.roomhub.model.SocialSignupRequest;
@@ -121,7 +121,7 @@ class SubmitServiceTest {
                 // when & then
                 RoomHubException exception = assertThrows(RoomHubException.class,
                                 () -> submitService.socialSubmit(email, request));
-                assertEquals(ErrorCode.NICKNAME_IS_DUPLICATE.getCode(), exception.getCode());
+                assertEquals(UserErrorCode.NICKNAME_IS_DUPLICATE.getCode(), exception.getCode());
         }
 
         @Test
@@ -139,7 +139,7 @@ class SubmitServiceTest {
                 // when & then
                 RoomHubException exception = assertThrows(RoomHubException.class,
                                 () -> submitService.socialSubmit(email, request));
-                assertEquals(ErrorCode.PHONENUMBER_COOLDOWN.getCode(), exception.getCode());
+                assertEquals(UserErrorCode.PHONENUMBER_COOLDOWN.getCode(), exception.getCode());
         }
 
         @Test
@@ -163,7 +163,7 @@ class SubmitServiceTest {
                 // when & then
                 RoomHubException exception = assertThrows(RoomHubException.class,
                                 () -> submitService.socialSubmit(email, request));
-                assertEquals(ErrorCode.USER_NOT_FOUND.getCode(), exception.getCode());
+                assertEquals(UserErrorCode.USER_NOT_FOUND.getCode(), exception.getCode());
         }
 
         @Test
