@@ -57,12 +57,25 @@ public class Room extends BaseTimeEntity {
     @Column(name = "amenity_type")
     private List<AmenityType> amenities = new ArrayList<>();
 
+    @Column(columnDefinition = "TEXT")
+    private String initialQuestion; // 호스트가 게스트에게 묻는 첫 질문
+
+    @Column(nullable = false)
+    private boolean isActive = true; // 숙소 활성화 상태
+
+    @Column(nullable = false)
+    private boolean isDeleted = false; // 삭제 여부 (Soft Delete)
+
+    @Column(nullable = false)
+    private Double hostRating = 0.0; // 호스트의 최신 신뢰 평점 (캐싱용)
+
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoomImage> images = new ArrayList<>();
 
     @Builder
     public Room(Long hostId, String title, String description, String imageUrl, String location,
-            Integer price, Integer capacity, RoomType roomType, PreferredGender preferredGender) {
+            Integer price, Integer capacity, String initialQuestion, RoomType roomType,
+            PreferredGender preferredGender) {
         this.hostId = hostId;
         this.title = title;
         this.description = description;
@@ -70,6 +83,9 @@ public class Room extends BaseTimeEntity {
         this.location = location;
         this.price = price;
         this.capacity = capacity;
+        this.initialQuestion = initialQuestion;
+        this.isActive = true;
+        this.isDeleted = false;
         this.roomType = roomType;
         this.preferredGender = preferredGender;
     }
@@ -88,6 +104,38 @@ public class Room extends BaseTimeEntity {
     public void addAmenity(AmenityType amenityType) {
         if (!this.amenities.contains(amenityType)) {
             this.amenities.add(amenityType);
+        }
+    }
+
+    public void updateStatus(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public void delete() {
+        this.isDeleted = true;
+        this.isActive = false;
+    }
+
+    public void updateHostRating(Double hostRating) {
+        this.hostRating = hostRating;
+    }
+
+    public void update(String title, String description, String imageUrl, String location,
+            Integer price, Integer capacity, String initialQuestion,
+            RoomType roomType, PreferredGender preferredGender,
+            List<AmenityType> amenities) {
+        this.title = title;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.location = location;
+        this.price = price;
+        this.capacity = capacity;
+        this.initialQuestion = initialQuestion;
+        this.roomType = roomType;
+        this.preferredGender = preferredGender;
+        this.amenities.clear();
+        if (amenities != null) {
+            this.amenities.addAll(amenities);
         }
     }
 }

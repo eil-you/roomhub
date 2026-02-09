@@ -1,13 +1,11 @@
 package com.roomhub.service;
 
 import com.roomhub.entity.Reservation;
-import com.roomhub.entity.RoomInventory;
 import com.roomhub.exception.RoomHubException;
 import com.roomhub.model.ReservationErrorCode;
 import com.roomhub.model.ReservationRequest;
 import com.roomhub.model.ReservationStatus;
 import com.roomhub.repository.ReservationRepository;
-import com.roomhub.repository.RoomInventoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,60 +17,19 @@ import java.util.List;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
-    private final RoomInventoryRepository roomInventoryRepository;
-    private final org.redisson.api.RedissonClient redissonClient;
 
-    private static final String LOCK_KEY_PREFIX = "reservation_lock:";
-
-    public void createReservation(ReservationRequest reservationRequest) {
-        String lockKey = LOCK_KEY_PREFIX + reservationRequest.roomId();
-        org.redisson.api.RLock lock = redissonClient.getLock(lockKey);
-
-        try {
-            // 락 획득 시도 (최대 5초 대기, 락 획득 후 10초간 유지)
-            boolean available = lock.tryLock(5, 10, java.util.concurrent.TimeUnit.SECONDS);
-            if (!available) {
-                throw new RoomHubException(ReservationErrorCode.CONCURRENCY_ERROR);
-            }
-
-            // 실제 비즈니스 로직 수행
-            processReservation(reservationRequest);
-
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RoomHubException(ReservationErrorCode.SYSTEM_ERROR);
-        } finally {
-            if (lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            }
-        }
-    }
-
+    /**
+     * 예약 생성 (매칭 확정 기록)
+     */
     @Transactional
-    public void processReservation(ReservationRequest reservationRequest) {
-        // 1. 예약 기간 내의 모든 날짜별 재고 조회
-        List<RoomInventory> roomInventories = roomInventoryRepository
-                .findAllByRoomIdAndDateBetween(
-                        reservationRequest.roomId(), reservationRequest.checkInDate(),
-                        reservationRequest.checkOutDate().minusDays(1));// 체크아웃 당일은 제외
-
-        // 2. 재고가 하나라도 부족하면 예약 불가 처리
-        for (RoomInventory roomInventory : roomInventories) {
-            if (roomInventory.getStock() <= 0) {
-                throw new RoomHubException(ReservationErrorCode.ROOM_NOT_AVAILABLE);
-            }
-        }
-
-        // 3. 재고 차감
-        for (RoomInventory roomInventory : roomInventories) {
-            roomInventory.decreaseStock();
-        }
-
-        // 4. 예약 저장
+    public void createReservation(ReservationRequest reservationRequest) {
+        // 채팅 등을 통해 합의된 내용을 시스템에 기록하는 역할
         reservationRepository.save(reservationRequest.toEntity());
     }
 
-    // 예약 확정 (PENDING -> CONFIRMED)
+    /**
+     * 예약 확정 (PENDING -> CONFIRMED)
+     */
     @Transactional
     public void confirmReservation(Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId)
@@ -85,35 +42,46 @@ public class ReservationService {
         reservation.updateStatus(ReservationStatus.CONFIRMED);
     }
 
-    // 예약 취소
+    /**
+     * 예약 취소
+     */
     @Transactional
     public void cancelReservation(Long reservationId) {
-        // 1. 예약 내역 조회
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new RoomHubException(ReservationErrorCode.RESERVATION_NOT_FOUND));
 
-        // 2. 이미 취소된 건인지 확인
         if (reservation.getStatus() == ReservationStatus.CANCELLED) {
             return;
         }
 
-        // 3. 예약 기간 내의 재고 복구
-        List<RoomInventory> roomInventories = roomInventoryRepository
-                .findAllByRoomIdAndDateBetween(
-                        reservation.getRoomId(), reservation.getCheckInDate(),
-                        reservation.getCheckOutDate().minusDays(1));
-
-        for (RoomInventory roomInventory : roomInventories) {
-            roomInventory.increaseStock();
-        }
-
-        // 4. 예약 상태 변경
         reservation.updateStatus(ReservationStatus.CANCELLED);
     }
 
-    // 사용자별 예약 조회
+    /**
+     * 사용자별 예약 조회
+     */
     @Transactional(readOnly = true)
     public List<Reservation> getReservationsByUserId(Long userId) {
         return reservationRepository.findAllByUserId(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Reservation> findAllByRoomId(Long roomId) {
+        return reservationRepository.findAllByRoomId(roomId);
+    }
+
+    /**
+     * 특정 숙소의 모든 확정된 예약을 취소 (숙소 삭제 시 호출)
+     */
+    @Transactional
+    public void cancelAllByRoomId(Long roomId) {
+        List<Reservation> confirmedReservations = reservationRepository.findAllByRoomId(roomId).stream()
+                .filter(r -> r.getStatus() == ReservationStatus.CONFIRMED)
+                .toList();
+
+        for (Reservation reservation : confirmedReservations) {
+            reservation.updateStatus(ReservationStatus.CANCELLED);
+            // TODO: 게스트에게 "숙소 삭제로 인한 취소" 알림 발송 로직 필요
+        }
     }
 }
