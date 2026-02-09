@@ -30,4 +30,12 @@ public class RedisConfig {
         redisTemplate.setValueSerializer(new StringRedisSerializer());
         return redisTemplate;
     }
+
+    @Bean
+    public org.redisson.api.RedissonClient redissonClient() {
+        org.redisson.config.Config config = new org.redisson.config.Config();
+        config.useSingleServer()
+                .setAddress("redis://" + host + ":" + port);
+        return org.redisson.Redisson.create(config);
+    }
 }

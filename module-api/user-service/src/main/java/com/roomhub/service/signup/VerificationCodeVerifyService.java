@@ -3,7 +3,7 @@ package com.roomhub.service.signup;
 import com.roomhub.entity.User;
 import com.roomhub.entity.Verification;
 import com.roomhub.exception.RoomHubException;
-import com.roomhub.model.ErrorCode;
+import com.roomhub.model.UserErrorCode;
 import com.roomhub.model.VerifyRequest;
 import com.roomhub.model.VerifyResponse;
 import com.roomhub.repository.UserRepository;
@@ -32,19 +32,19 @@ public class VerificationCodeVerifyService {
         String code = verifyRequest.getVerificationCode();
 
         Verification vc = verificationRepository.findVerificationByPhoneNumber(phoneNumber)
-                .orElseThrow(() -> new RoomHubException(ErrorCode.CODE_IS_EMPTY));
+                .orElseThrow(() -> new RoomHubException(UserErrorCode.CODE_IS_EMPTY));
 
         if (!verificationCodePolicyService.isVerificationCodeValid(vc)) {
-            throw new RoomHubException(ErrorCode.CODE_EXPIRED);
+            throw new RoomHubException(UserErrorCode.CODE_EXPIRED);
         }
 
         if (!isCodeMatch(vc, code)) {
             incrementFailCount(vc);
-            throw new RoomHubException(ErrorCode.CODE_NOT_VALID);
+            throw new RoomHubException(UserErrorCode.CODE_NOT_VALID);
         }
 
         if (!isAlreadyRegistered(phoneNumber)) {
-            throw new RoomHubException(ErrorCode.ALREADY_REGISTERED);
+            throw new RoomHubException(UserErrorCode.ALREADY_REGISTERED);
         }
 
         // 인증 번호 사용(db update)
@@ -55,7 +55,7 @@ public class VerificationCodeVerifyService {
         try {
             verifyResponse.setEncryptedKey(AES256Util.encrypt(secretKey, phoneNumber));
         } catch (Exception e) {
-            throw new RoomHubException(ErrorCode.PHONENUMBER_FAILED_ENCRYPT);
+            throw new RoomHubException(UserErrorCode.PHONENUMBER_FAILED_ENCRYPT);
         }
 
         return verifyResponse;
@@ -79,7 +79,7 @@ public class VerificationCodeVerifyService {
         int failcount = vc.getFailCount();
 
         if (failcount == 3) {
-            throw new RoomHubException(ErrorCode.CODE_FAILD_COUNT_LIMIT);
+            throw new RoomHubException(UserErrorCode.CODE_FAILD_COUNT_LIMIT);
         }
 
         vc.setFailCount(failcount + 1);

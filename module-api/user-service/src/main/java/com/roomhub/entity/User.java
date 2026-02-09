@@ -8,6 +8,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import com.roomhub.model.Language;
+import com.roomhub.model.Interest;
+import java.util.Set;
+import java.util.HashSet;
 import java.time.LocalDate;
 
 @Entity
@@ -44,8 +48,31 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private Role role;
 
-    private String provider; // google, kakao, naver
+    private String provider; // google
     private String providerId; // sub returned from provider
+
+    @Column(columnDefinition = "TEXT")
+    private String bio; // 자기소개
+
+    @Column(columnDefinition = "TEXT")
+    private String lifestyle; // 라이프스타일/성향
+
+    private String profileImage; // 프로필 이미지 URL
+
+    @Column(nullable = false)
+    private double trustScore = 50; // 신뢰 점수 (기본값 5점)
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "user_languages", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "language")
+    private Set<Language> languages = new HashSet<>();
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "user_interests", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "interest")
+    private Set<Interest> interests = new HashSet<>();
 
     // Email용 생성자
     public User(SubmitRequest dto, String phoneNumber) {

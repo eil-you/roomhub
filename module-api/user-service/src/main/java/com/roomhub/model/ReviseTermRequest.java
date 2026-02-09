@@ -16,12 +16,12 @@ public record ReviseTermRequest(
     @Override
     public void check() {
         if (title == null)
-            throw new RoomHubException(ErrorCode.TERM_IS_EMPTY);
+            throw new RoomHubException(UserErrorCode.TERM_IS_EMPTY);
         if (version == null)
-            throw new RoomHubException(ErrorCode.VERSION_IS_EMPTY);
+            throw new RoomHubException(UserErrorCode.VERSION_IS_EMPTY);
         if (updatedBy == null)
-            throw new RoomHubException(ErrorCode.UPDATEDBY_IS_EMPTY);
+            throw new RoomHubException(UserErrorCode.UPDATEDBY_IS_EMPTY);
         if (lockVersion == null)
-            throw new RoomHubException(ErrorCode.LOCKVERSION_IS_EMPTY);
+            throw new RoomHubException(UserErrorCode.LOCKVERSION_IS_EMPTY);
     }
 }

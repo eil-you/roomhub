@@ -4,7 +4,7 @@ import com.roomhub.entity.Agreement;
 import com.roomhub.entity.TermId;
 import com.roomhub.entity.User;
 import com.roomhub.exception.RoomHubException;
-import com.roomhub.model.ErrorCode;
+import com.roomhub.model.UserErrorCode;
 import com.roomhub.model.SocialSignupRequest;
 import com.roomhub.model.SubmitRequest;
 import com.roomhub.model.Status;
@@ -45,7 +45,7 @@ public class SubmitService {
 
         // 필수 약관 체크
         if (!areRequiredTermsChecked(signupForm.termIds())) {
-            throw new RoomHubException(ErrorCode.REQUIRED_TERMS_CHECKED);
+            throw new RoomHubException(UserErrorCode.REQUIRED_TERMS_CHECKED);
         }
 
         // db저장
@@ -56,17 +56,17 @@ public class SubmitService {
     public void isFormatValid(SubmitRequest signupForm, String phoneNumber) {
         // phoneNumber
         if (!isVerifiedPhoneNumber(phoneNumber)) {
-            throw new RoomHubException(ErrorCode.PHONENUMBER_COOLDOWN);
+            throw new RoomHubException(UserErrorCode.PHONENUMBER_COOLDOWN);
         }
 
         // email
         if (isEmailExist(signupForm.email())) {
-            throw new RoomHubException(ErrorCode.ALREADY_REGISTERED);
+            throw new RoomHubException(UserErrorCode.ALREADY_REGISTERED);
         }
 
         // nickname
         if (isNicknameExist(signupForm.nickname())) {
-            throw new RoomHubException(ErrorCode.NICKNAME_IS_DUPLICATE);
+            throw new RoomHubException(UserErrorCode.NICKNAME_IS_DUPLICATE);
         }
     }
 
@@ -85,7 +85,7 @@ public class SubmitService {
         try {
             return AES256Util.decrypt(secretKey, encryptedKey);
         } catch (Exception e) {
-            throw new RoomHubException(ErrorCode.PHONENUMBER_FAILED_DECRYPT, e);
+            throw new RoomHubException(UserErrorCode.PHONENUMBER_FAILED_DECRYPT, e);
         }
     }
 
@@ -130,20 +130,20 @@ public class SubmitService {
 
         // 닉네임 중복 체크 등 검증
         if (isNicknameExist(socialSignupRequest.nickname())) {
-            throw new RoomHubException(ErrorCode.NICKNAME_IS_DUPLICATE);
+            throw new RoomHubException(UserErrorCode.NICKNAME_IS_DUPLICATE);
         }
 
         if (!isVerifiedPhoneNumber(phoneNumber)) {
-            throw new RoomHubException(ErrorCode.PHONENUMBER_COOLDOWN);
+            throw new RoomHubException(UserErrorCode.PHONENUMBER_COOLDOWN);
         }
 
         if (!areRequiredTermsChecked(socialSignupRequest.termIds())) {
-            throw new RoomHubException(ErrorCode.REQUIRED_TERMS_CHECKED);
+            throw new RoomHubException(UserErrorCode.REQUIRED_TERMS_CHECKED);
         }
 
         User user = userRepository.findByEmail(email);
         if (user == null) {
-            throw new RoomHubException(ErrorCode.USER_NOT_FOUND);
+            throw new RoomHubException(UserErrorCode.USER_NOT_FOUND);
         }
 
         user.updateSocialInfo(socialSignupRequest.birth(), socialSignupRequest.gender(), phoneNumber);

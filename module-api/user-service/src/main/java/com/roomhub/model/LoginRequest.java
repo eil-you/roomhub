@@ -11,10 +11,10 @@ public record LoginRequest(
     @Override
     public void check() {
         if (email == null || email.isBlank()) {
-            throw new RoomHubException(ErrorCode.EMAIL_FROM_IS_EMPTY);
+            throw new RoomHubException(UserErrorCode.EMAIL_FROM_IS_EMPTY);
         }
         if (password == null || password.isBlank()) {
-            throw new RoomHubException(ErrorCode.PASSWORD_IS_EMPTY);
+            throw new RoomHubException(UserErrorCode.PASSWORD_IS_EMPTY);
         }
     }
 }
