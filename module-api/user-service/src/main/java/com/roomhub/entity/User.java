@@ -10,6 +10,8 @@ import lombok.Setter;
 
 import com.roomhub.model.Language;
 import com.roomhub.model.Interest;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import java.util.Set;
 import java.util.HashSet;
 import java.time.LocalDate;
@@ -60,7 +62,23 @@ public class User extends BaseTimeEntity {
     private String profileImage; // 프로필 이미지 URL
 
     @Column(nullable = false)
-    private double trustScore = 50; // 신뢰 점수 (기본값 5점)
+    private double trustScore = 50; // 신뢰 점수 (기본값 50점)
+
+    @Min(0)
+    @Max(5)
+    @Column(nullable = false)
+    private double hostRating = 0.0; // 호스트 평점
+
+    @Column(nullable = false)
+    private int hostReviewCount = 0; // 호스트 리뷰 개수
+
+    @Min(0)
+    @Max(5)
+    @Column(nullable = false)
+    private double guestRating = 0.0; // 게스트 평점
+
+    @Column(nullable = false)
+    private int guestReviewCount = 0; // 게스트 리뷰 개수
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "user_languages", joinColumns = @JoinColumn(name = "user_id"))
