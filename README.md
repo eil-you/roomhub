@@ -1,18 +1,18 @@
-# 🏠 CouchPing (카우치핑)
+# ?룧 CouchPing (移댁슦移섑븨)
 
-[![Roomhub CI](https://github.com/f-lab-edu/roomhub/actions/workflows/ci.yml/badge.svg)](https://github.com/f-lab-edu/roomhub/actions/workflows/ci.yml)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=f-lab-edu_roomhub&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=f-lab-edu_roomhub)
+[![couchping CI](https://github.com/f-lab-edu/couchping/actions/workflows/ci.yml/badge.svg)](https://github.com/f-lab-edu/couchping/actions/workflows/ci.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=f-lab-edu_couchping&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=f-lab-edu_couchping)
 
-> 기존 **Roomhub** 프로젝트에서 '신뢰 기반의 C2C 숙박 공유 플랫폼'으로 진화 중인 프로젝트입니다.
+> 湲곗〈 **couchping** ?꾨줈?앺듃?먯꽌 '?좊ː 湲곕컲??C2C ?숇컯 怨듭쑀 ?뚮옯???쇰줈 吏꾪솕 以묒씤 ?꾨줈?앺듃?낅땲??
 
-💡 Project Vision: Why Couchsurfing?
-단순한 숙박업소 예약을 넘어, 개인 간의 신뢰를 바탕으로 전 세계 여행자와 호스트를 연결합니다.
+?뮕 Project Vision: Why Couchsurfing?
+?⑥닚???숇컯?낆냼 ?덉빟???섏뼱, 媛쒖씤 媛꾩쓽 ?좊ː瑜?諛뷀깢?쇰줈 ???멸퀎 ?ы뻾?먯? ?몄뒪?몃? ?곌껐?⑸땲??
 
-B2C → C2C: 기업의 상품이 아닌 개인의 공간과 문화를 공유합니다.
+B2C ??C2C: 湲곗뾽???곹뭹???꾨땶 媛쒖씤??怨듦컙怨?臾명솕瑜?怨듭쑀?⑸땲??
 
-Trust-First: 자기소개, 구사 언어, 라이프스타일 기반의 매칭으로 안전한 공유 환경을 구축합니다.
+Trust-First: ?먭린?뚭컻, 援ъ궗 ?몄뼱, ?쇱씠?꾩뒪???湲곕컲??留ㅼ묶?쇰줈 ?덉쟾??怨듭쑀 ?섍꼍??援ъ텞?⑸땲??
 
-## 🛠 Tech Stack
+## ?썱 Tech Stack
 
 - **Framework**: Spring Boot 3.2.2
 - **Language**: Java 21
@@ -21,42 +21,42 @@ Trust-First: 자기소개, 구사 언어, 라이프스타일 기반의 매칭으
 - **Security**: Spring Security, OAuth2, JWT
 - **DevOps**: Docker, GitHub Actions, SonarCloud
 
-## 📂 Project Structure
+## ?뱛 Project Structure
 
-- `module-api`: API 서비스 모듈 (User, Reservation 등)
-- `module-common`: 핵심 비즈니스 로직, 공용 예외 처리 및 공통 모델
-- `module-infra`: 외부 인프라 연동 (Discovery, Gateway)
+- `module-api`: API ?쒕퉬??紐⑤뱢 (User, Reservation ??
+- `module-common`: ?듭떖 鍮꾩쫰?덉뒪 濡쒖쭅, 怨듭슜 ?덉쇅 泥섎━ 諛?怨듯넻 紐⑤뜽
+- `module-infra`: ?몃? ?명봽???곕룞 (Discovery, Gateway)
 
-## ✨ Key Features & Architectural Decisions
+## ??Key Features & Architectural Decisions
 
-### 1. 신뢰 기반의 도메인 설계(New)
-- **Extensible User Profile**: 사용자의 언어 숙련도, 라이프스타일 태그 등 복잡한 개인 정보를 효율적으로 관리하기 위한 1:N 정규화 설계했습니다.
-- **Matching Workflow**: 단순 결제가 아닌 '요청-수락-완료'로 이어지는 호스트 의사 결정 프로세스를 구현했습니다.
+### 1. ?좊ː 湲곕컲???꾨찓???ㅺ퀎(New)
+- **Extensible User Profile**: ?ъ슜?먯쓽 ?몄뼱 ?숇젴?? ?쇱씠?꾩뒪????쒓렇 ??蹂듭옟??媛쒖씤 ?뺣낫瑜??⑥쑉?곸쑝濡?愿由ы븯湲??꾪븳 1:N ?뺢퇋???ㅺ퀎?덉뒿?덈떎.
+- **Matching Workflow**: ?⑥닚 寃곗젣媛 ?꾨땶 '?붿껌-?섎씫-?꾨즺'濡??댁뼱吏???몄뒪???섏궗 寃곗젙 ?꾨줈?몄뒪瑜?援ы쁽?덉뒿?덈떎.
 
-### 2. 분산 락(Distributed Lock)을 통한 정합성 보장
-- **Redisson 기반 구현**: `reservation-service`에서 동시 예약 요청 시 발생할 수 있는 데이터 정합성 문제(Overbooking)를 해결하기 위해 Redis 분산 락을 도입했습니다.
-- **TryLock 패턴**: 락 획득 대기 시간과 만료 시간을 설정하여 데드락(Deadlock)을 방지하고 시스템 안정성을 높였습니다.
+### 2. 遺꾩궛 ??Distributed Lock)???듯븳 ?뺥빀??蹂댁옣
+- **Redisson 湲곕컲 援ы쁽**: `reservation-service`?먯꽌 ?숈떆 ?덉빟 ?붿껌 ??諛쒖깮?????덈뒗 ?곗씠???뺥빀??臾몄젣(Overbooking)瑜??닿껐?섍린 ?꾪빐 Redis 遺꾩궛 ?쎌쓣 ?꾩엯?덉뒿?덈떎.
+- **TryLock ?⑦꽩**: ???띾뱷 ?湲??쒓컙怨?留뚮즺 ?쒓컙???ㅼ젙?섏뿬 ?곕뱶??Deadlock)??諛⑹??섍퀬 ?쒖뒪???덉젙?깆쓣 ?믪??듬땲??
 
 ### 3. MSA (Microservice Architecture)
-- **Service Discovery (Eureka)**: 각 서비스의 위치를 동적으로 관리하여 확장성을 확보했습니다.
-- **API Gateway**: 단일 진입점을 통해 라우팅 및 횡단 관심사(인증/인가)를 처리합니다.
+- **Service Discovery (Eureka)**: 媛??쒕퉬?ㅼ쓽 ?꾩튂瑜??숈쟻?쇰줈 愿由ы븯???뺤옣?깆쓣 ?뺣낫?덉뒿?덈떎.
+- **API Gateway**: ?⑥씪 吏꾩엯?먯쓣 ?듯빐 ?쇱슦??諛??〓떒 愿?ъ궗(?몄쬆/?멸?)瑜?泥섎━?⑸땲??
 
-## 📂 Project Structure (Multi-Module)
-- **module-api**: 사용자 프로필 관리, 매칭 요청, 리뷰 시스템 API
-- **module-common**: 도메인 엔티티 및 공통 예외 처리
-- **module-infra**: Eureka Discovery, API Gateway 설정 및 외부 연동
+## ?뱛 Project Structure (Multi-Module)
+- **module-api**: ?ъ슜???꾨줈??愿由? 留ㅼ묶 ?붿껌, 由щ럭 ?쒖뒪??API
+- **module-common**: ?꾨찓???뷀떚??諛?怨듯넻 ?덉쇅 泥섎━
+- **module-infra**: Eureka Discovery, API Gateway ?ㅼ젙 諛??몃? ?곕룞
 
-## 🚀 Getting Started
+## ?? Getting Started
 
 ```bash
-# 레포지토리 클론
-git clone https://github.com/f-lab-edu/roomhub.git
+# ?덊룷吏?좊━ ?대줎
+git clone https://github.com/f-lab-edu/couchping.git
 
-# 빌드 및 실행
+# 鍮뚮뱶 諛??ㅽ뻾
 ./gradlew bootRun
 ```
 
-## 🤝 Contributing
+## ?쩃 Contributing
 
-본 프로젝트의 기여 가이드는 [CONTRIBUTING.md](./CONTRIBUTING.md)를 확인해주세요.
-커밋 메시지 규칙 및 브랜치 전략(Git-flow)에 대한 상세한 가이드가 포함되어 있습니다.
+蹂??꾨줈?앺듃??湲곗뿬 媛?대뱶??[CONTRIBUTING.md](./CONTRIBUTING.md)瑜??뺤씤?댁＜?몄슂.
+而ㅻ컠 硫붿떆吏 洹쒖튃 諛?釉뚮옖移??꾨왂(Git-flow)??????곸꽭??媛?대뱶媛 ?ы븿?섏뼱 ?덉뒿?덈떎.

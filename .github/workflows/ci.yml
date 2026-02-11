@@ -1,4 +1,4 @@
-name: Roomhub CI
+name: couchping CI
 
 on:
   push:

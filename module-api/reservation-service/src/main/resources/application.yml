@@ -5,9 +5,9 @@ spring:
   application:
     name: reservation-service
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:5432/roomhub
-    username: ${DB_USERNAME:roomuser}
-    password: ${DB_PASSWORD:roompass}
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/couchping
+    username: ${DB_USERNAME:couchuser}
+    password: ${DB_PASSWORD:couchpass}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
