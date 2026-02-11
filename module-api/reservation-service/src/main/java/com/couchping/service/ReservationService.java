@@ -19,16 +19,16 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
 
     /**
-     * ???고뒎 ??諛댁뎽 (嶺뚮씞?됭눧??筌먦끉???リ옇?▽빳?
+     * 숙소 예약 생성
      */
     @Transactional
     public void createReservation(ReservationRequest reservationRequest) {
-        // 嶺?????繹먮냱諭????????諭踰????怨몃뮔????戮?츩??戮?뱺 ?リ옇?▽빳??濡ル츎 ????
+        // 예약 요청 정보를 바탕으로 예약 엔티티 생성 및 저장
         reservationRepository.save(reservationRequest.toEntity());
     }
 
     /**
-     * ???고뒎 ?筌먦끉??(PENDING -> CONFIRMED)
+     * 숙소 예약 확정 (PENDING -> CONFIRMED)
      */
     @Transactional
     public void confirmReservation(Long reservationId) {
@@ -43,7 +43,7 @@ public class ReservationService {
     }
 
     /**
-     * ???고뒎 ???쳛??
+     * 숙소 예약 취소
      */
     @Transactional
     public void cancelReservation(Long reservationId) {
@@ -58,7 +58,7 @@ public class ReservationService {
     }
 
     /**
-     * ???????????고뒎 ?브퀗???
+     * 유저별 예약 내역 조회
      */
     @Transactional(readOnly = true)
     public List<Reservation> getReservationsByUserId(Long userId) {
@@ -71,7 +71,7 @@ public class ReservationService {
     }
 
     /**
-     * ?獄??????덇틬??嶺뚮ㅄ維獄??筌먦끉??????고뒎?????쳛??(???덇틬 ???????筌뤾쑵??
+     * 특정 숙소의 모든 확정된 예약 취소 (숙소 삭제 시 호출)
      */
     @Transactional
     public void cancelAllByRoomId(Long roomId) {
@@ -81,8 +81,7 @@ public class ReservationService {
 
         for (Reservation reservation : confirmedReservations) {
             reservation.updateStatus(ReservationStatus.CANCELLED);
-            // TODO: ?롪퍓???筌뤾쑬?좈뇦?"???덇틬 ???節놁뿉??筌뤿굝由????쳛?? ???逾??꾩룇裕???β돦裕뉐퐲??熬곣뫗??
+            // TODO: 알림 발송 (숙소 삭제로 인해 예약이 취소되었음을 게스트에게 알림)
         }
     }
 }
-

@@ -27,7 +27,7 @@ public class SendVerificationCodeService {
 
         ValidationUtil.checkPhoneNumber(phoneNumber);
 
-        // Rate limiting: 1????沅???덉뵬 甕곕뜇??獄쏆뮇????쀫립
+        // Rate limiting: 1분 이내 재발송 방지
         if (redisUtil.getData("SMS_LIMIT:" + phoneNumber) != null) {
             throw new CouchPingException(UserErrorCode.PHONENUMBER_COOLDOWN);
         }
@@ -43,23 +43,23 @@ public class SendVerificationCodeService {
         String code = makeRandomCode();
         saveVerificationCode(optionalVC, phoneNumber, code);
 
-        // 獄쏆뮇????쀫립 ????쇱젟 (1??
+        // SMS 발송 제한 설정 (1분)
         redisUtil.setData("SMS_LIMIT:" + phoneNumber, "true", 60000L);
     }
 
     /*
-     * ??뺣쑁 ?꾨뗀諭???밴쉐
+     * 랜덤 인증번호 생성
      */
     public String makeRandomCode() {
         // 1000 ~ 9999
         String randomCode = String.valueOf((int) (Math.random() * 9000) + 1000);
 
-        log.info("??밴쉐???紐꾩쵄甕곕뜇??: {}", randomCode);
+        log.info("생성된 인증번호: {}", randomCode);
         return randomCode;
     }
 
     /*
-     * ?紐꾩쵄甕곕뜇??db??????
+     * 인증번호 DB 저장
      */
     public void saveVerificationCode(Optional<Verification> optionalVC, String phoneNumber, String code) {
 
@@ -81,4 +81,3 @@ public class SendVerificationCodeService {
     }
 
 }
-

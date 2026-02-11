@@ -68,7 +68,7 @@ public class TokenProvider {
                 .build();
     }
 
-    // OAuth2 濡쒓렇???깃났 ???대찓?쇨낵 Role??諛쏆븘???좏겙 ?앹꽦
+    // OAuth2 로그인 성공 시 이메일과 Role을 받아 토큰 생성
     public TokenDto generateTokenDto(String email, String role) {
         long now = (new Date()).getTime();
 
@@ -107,7 +107,7 @@ public class TokenProvider {
         Claims claims = parseClaims(accessToken);
 
         if (claims.get(AUTHORITIES_KEY) == null) {
-            throw new RuntimeException("沅뚰븳 ?뺣낫媛 ?녿뒗 ?좏겙?낅땲??");
+            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
         }
 
         Collection<? extends GrantedAuthority> authorities = Arrays
@@ -125,13 +125,13 @@ public class TokenProvider {
             Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("?섎せ??JWT ?쒕챸?낅땲??");
+            log.info("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {
-            log.info("留뚮즺??JWT ?좏겙?낅땲??");
+            log.info("만료된 JWT 토큰입니다.");
         } catch (UnsupportedJwtException e) {
-            log.info("吏?먮릺吏 ?딅뒗 JWT ?좏겙?낅땲??");
+            log.info("지원되지 않는 JWT 토큰입니다.");
         } catch (IllegalArgumentException e) {
-            log.info("JWT ?좏겙???섎せ?섏뿀?듬땲??");
+            log.info("JWT 토큰이 잘못되었습니다.");
         }
         return false;
     }

@@ -17,18 +17,18 @@ public class RoomController {
     private final RoomService roomService;
 
     /**
-     * ?숈냼 ?깅줉
+     * 숙소 등록
      */
     @PostMapping
     public ResponseEntity<Long> registerRoom(
-            @RequestHeader("X-USER-ID") Long hostId, // ?꾩떆濡??ㅻ뜑?먯꽌 ?좎? ID 異붿텧 (?섏쨷???쒗걧由ы떚)
-            @RequestBody RoomRequest request) {
+            @RequestHeader("X-USER-ID") Long hostId,
+            @RequestBody RoomRequest request) { // 임시로 헤더에서 유저 ID 추출 (나중에 시큐리티 적용)
         Long roomId = roomService.registerRoom(hostId, request);
         return ResponseEntity.ok(roomId);
     }
 
     /**
-     * ?숈냼 ?섏젙
+     * 숙소 수정
      */
     @PutMapping("/{roomId}")
     public ResponseEntity<String> updateRoom(
@@ -40,7 +40,7 @@ public class RoomController {
     }
 
     /**
-     * ?숈냼 ?쒖꽦???곹깭 蹂寃?(ON/OFF)
+     * 숙소 활성화 상태 변경 (ON/OFF)
      */
     @PatchMapping("/{roomId}/status")
     public ResponseEntity<String> toggleStatus(
@@ -52,7 +52,7 @@ public class RoomController {
     }
 
     /**
-     * ?숈냼 ??젣 (Soft Delete)
+     * 숙소 삭제 (Soft Delete)
      */
     @DeleteMapping("/{roomId}")
     public ResponseEntity<String> deleteRoom(
@@ -63,7 +63,7 @@ public class RoomController {
     }
 
     /**
-     * ?숇컯 ?곸꽭 議고쉶
+     * 숙소 상세 조회
      */
     @GetMapping("/{roomId}")
     public ResponseEntity<Room> getRoom(@PathVariable Long roomId) {
@@ -71,7 +71,7 @@ public class RoomController {
     }
 
     /**
-     * ?몄뒪?몃퀎 ?깅줉 ?숈냼 紐⑸줉 議고쉶
+     * 호스트별 등록 숙소 목록 조회
      */
     @GetMapping("/host/{hostId}")
     public ResponseEntity<List<Room>> getRoomsByHost(@PathVariable Long hostId) {
@@ -79,7 +79,7 @@ public class RoomController {
     }
 
     /**
-     * ?꾩껜 ?쒖꽦 ?숈냼 紐⑸줉 議고쉶
+     * 전체 활성 숙소 목록 조회
      */
     @GetMapping
     public ResponseEntity<List<Room>> getAllRooms() {

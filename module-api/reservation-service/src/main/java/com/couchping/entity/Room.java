@@ -23,25 +23,25 @@ public class Room extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private Long hostId; // ?몄뒪???좎? ID
+    private Long hostId; // 호스트 ID
 
     @Column(nullable = false)
-    private String title; // ?숈냼 ?쒕ぉ
+    private String title; // 숙소 제목
 
     @Column(columnDefinition = "TEXT")
-    private String description; // ?숈냼 ?곸꽭 ?ㅻ챸
+    private String description; // 숙소 상세 설명
 
     @Column
-    private String imageUrl; // ?숈냼 ????ъ쭊 寃쎈줈
+    private String imageUrl; // 숙소 대표 사진 경로
 
     @Column(nullable = false)
-    private String location; // ??듭쟻???꾩튂
+    private String location; // 대략적인 위치
 
     @Column(nullable = false)
-    private Integer price; // 1諛뺣떦 媛寃?
+    private Integer price; // 1박당 가격
 
     @Column(nullable = false)
-    private Integer capacity; // 理쒕? ?섏슜 ?몄썝
+    private Integer capacity; // 최대 수용 인원
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -58,16 +58,16 @@ public class Room extends BaseTimeEntity {
     private List<AmenityType> amenities = new ArrayList<>();
 
     @Column(columnDefinition = "TEXT")
-    private String initialQuestion; // ?몄뒪?멸? 寃뚯뒪?몄뿉寃?臾삳뒗 泥?吏덈Ц
+    private String initialQuestion; // 호스트가 게스트에게 묻는 첫 질문
 
     @Column(nullable = false)
-    private boolean isActive = true; // ?숈냼 ?쒖꽦???곹깭
+    private boolean isActive = true; // 숙소 활성화 상태
 
     @Column(nullable = false)
-    private boolean isDeleted = false; // ??젣 ?щ? (Soft Delete)
+    private boolean isDeleted = false; // 삭제 여부 (Soft Delete)
 
     @Column(nullable = false)
-    private Double hostRating = 0.0; // ?몄뒪?몄쓽 理쒖떊 ?좊ː ?됱젏 (罹먯떛??
+    private Double hostRating = 0.0; // 호스트의 최신 평점 (캐싱)
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoomImage> images = new ArrayList<>();
@@ -84,13 +84,14 @@ public class Room extends BaseTimeEntity {
         this.price = price;
         this.capacity = capacity;
         this.initialQuestion = initialQuestion;
-        this.isActive = true;
-        this.isDeleted = false;
         this.roomType = roomType;
         this.preferredGender = preferredGender;
+        this.initialQuestion = initialQuestion;
+        this.isActive = true;
+        this.isDeleted = false;
     }
 
-    // ?몄쓽 硫붿꽌?? ?대?吏 異붽?
+    // 편의 메서드: 이미지 추가
     public void addImage(String imageUrl, int sortOrder) {
         RoomImage roomImage = RoomImage.builder()
                 .room(this)
@@ -100,7 +101,7 @@ public class Room extends BaseTimeEntity {
         this.images.add(roomImage);
     }
 
-    // ?몄쓽 硫붿꽌?? ?몄쓽?쒖꽕 異붽?
+    // 편의 메서드: 편의시설 추가
     public void addAmenity(AmenityType amenityType) {
         if (!this.amenities.contains(amenityType)) {
             this.amenities.add(amenityType);

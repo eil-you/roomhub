@@ -14,21 +14,20 @@ public record RegisterTermRequest(String title,
 
     @Override
     public void check() {
-        // ??? ?類ｋ궖 ?類ㅼ뵥
+        // null 체크
         if (this == null)
             throw new CouchPingException(UserErrorCode.TERM_IS_EMPTY);
-        // ??뺛걠
+        // 제목
         if (title == null || title.isEmpty())
             throw new CouchPingException(UserErrorCode.TERM_TITLE_IS_EMPTY);
-        // 甕곌쑴??
+        // 버전
         if (version == null)
             throw new CouchPingException(UserErrorCode.VERSION_IS_EMPTY);
-        // createdBy
+        // 생성자
         if (createdBy == null)
             throw new CouchPingException(UserErrorCode.CREATEDBY_IS_EMPTY);
-        // updatedBy
+        // 수정자
         if (createdBy == null)
             throw new CouchPingException(UserErrorCode.UPDATEDBY_IS_EMPTY);
     }
 }
-

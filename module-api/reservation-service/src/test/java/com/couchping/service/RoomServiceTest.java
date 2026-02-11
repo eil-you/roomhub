@@ -39,10 +39,7 @@ class RoomServiceTest {
         RoomRequest request = createRoomRequest("테스트 숙소");
         Room room = request.toEntity(hostId);
 
-        // Mocking para o setId (opcional se n李푥 precisar do id no teste, mas boa
-        // pr李펤ica)
-        // Como o Room n李푥 tem setter para ID, o save original do JpaRepository
-        // retornaria o objeto com ID.
+        // Room은 ID에 대한 setter가 없으므로, JpaRepository의 save가 ID가 있는 객체를 반환하도록 설정합니다.
         given(roomRepository.save(any(Room.class))).willReturn(room);
 
         // when
@@ -134,12 +131,12 @@ class RoomServiceTest {
         return Room.builder()
                 .hostId(hostId)
                 .title(title)
-                .description("??살구")
+                .description("숙소 설명")
                 .imageUrl("url")
-                .location("??뽰뒻")
+                .location("서울시 강남구")
                 .price(10000)
                 .capacity(2)
-                .initialQuestion("筌욌뜄揆")
+                .initialQuestion("게스트에게 묻고 싶은 질문")
                 .roomType(RoomType.PRIVATE_ROOM)
                 .preferredGender(PreferredGender.ANY)
                 .build();

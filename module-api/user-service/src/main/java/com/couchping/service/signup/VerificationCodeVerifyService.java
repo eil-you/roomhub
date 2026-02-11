@@ -47,10 +47,10 @@ public class VerificationCodeVerifyService {
             throw new CouchPingException(UserErrorCode.ALREADY_REGISTERED);
         }
 
-        // ?紐꾩쵄 甕곕뜇??????db update)
+        // 인증 완료 처리 (DB update)
         setVerificationUsed(vc);
 
-        // ?袁れ넅甕곕뜇???酉???
+        // 인증 완료 응답 생성
         VerifyResponse verifyResponse = new VerifyResponse();
         try {
             verifyResponse.setEncryptedKey(AES256Util.encrypt(secretKey, phoneNumber));
@@ -61,19 +61,19 @@ public class VerificationCodeVerifyService {
         return verifyResponse;
     }
 
-    /* ?紐꾩쵄?꾨뗀諭??類ㅼ뵥 */
+    /* 인증번호 일치 확인 */
     public boolean isCodeMatch(Verification vc, String code) {
         return vc.getCode().equals(code);
     }
 
-    /* ?袁れ넅甕곕뜇???紐꾩쵄 ?袁⑥┷ */
+    /* 인증번호 사용 처리 */
     @Transactional
     public void setVerificationUsed(Verification vc) {
         vc.setUsed(true);
         verificationRepository.save(vc);
     }
 
-    /* ?紐꾩쵄?꾨뗀諭????귐됥늺 failCount+1 */
+    /* 인증 실패 횟수 증가 failCount+1 */
     public int incrementFailCount(Verification vc) {
 
         int failcount = vc.getFailCount();
@@ -88,7 +88,7 @@ public class VerificationCodeVerifyService {
         return failcount;
     }
 
-    /* ?袁れ넅甕곕뜇?뉐첎? ??? 揶쎛??낅쭆 ?④쑴??紐? 筌ｋ똾寃?*/
+    /* 이미 가입된 번호인지 확인 */
     public boolean isAlreadyRegistered(String phoneNumber) {
         User user = userRepository.findByPhoneNumber(phoneNumber);
 
@@ -99,4 +99,3 @@ public class VerificationCodeVerifyService {
     }
 
 }
-

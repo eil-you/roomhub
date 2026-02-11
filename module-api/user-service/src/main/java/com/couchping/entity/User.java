@@ -30,7 +30,7 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, unique = true, length = 255)
     private String email;
 
-    @Column(length = 255) // OAuth2 ?ъ슜?먮뒗 鍮꾨?踰덊샇媛 ?놁쓣 ?섎룄 ?덉쓬 (nullable)
+    @Column(length = 255) // OAuth2 사용자는 비밀번호가 없을 수도 있음 (nullable)
     private String password;
 
     @Column(nullable = true)
@@ -54,31 +54,31 @@ public class User extends BaseTimeEntity {
     private String providerId; // sub returned from provider
 
     @Column(columnDefinition = "TEXT")
-    private String bio; // ?먭린?뚭컻
+    private String bio; // 자기소개
 
     @Column(columnDefinition = "TEXT")
-    private String lifestyle; // ?쇱씠?꾩뒪????깊뼢
+    private String lifestyle; // 라이프스타일 성향
 
-    private String profileImage; // ?꾨줈???대?吏 URL
+    private String profileImage; // 프로필 이미지 URL
 
     @Column(nullable = false)
-    private double trustScore = 50; // ?좊ː ?먯닔 (湲곕낯媛?50??
+    private double trustScore = 50; // 신뢰 점수 (기본값 50)
 
     @Min(0)
     @Max(5)
     @Column(nullable = false)
-    private double hostRating = 0.0; // ?몄뒪???됱젏
+    private double hostRating = 0.0; // 호스트 평점
 
     @Column(nullable = false)
-    private int hostReviewCount = 0; // ?몄뒪??由щ럭 媛쒖닔
+    private int hostReviewCount = 0; // 호스트 리뷰 개수
 
     @Min(0)
     @Max(5)
     @Column(nullable = false)
-    private double guestRating = 0.0; // 寃뚯뒪???됱젏
+    private double guestRating = 0.0; // 게스트 평점
 
     @Column(nullable = false)
-    private int guestReviewCount = 0; // 寃뚯뒪??由щ럭 媛쒖닔
+    private int guestReviewCount = 0; // 게스트 리뷰 개수
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "user_languages", joinColumns = @JoinColumn(name = "user_id"))
@@ -92,7 +92,7 @@ public class User extends BaseTimeEntity {
     @Column(name = "interest")
     private Set<Interest> interests = new HashSet<>();
 
-    // Email???앹꽦??
+    // 일반 회원가입 생성자
     public User(SubmitRequest dto, String phoneNumber) {
         this.email = dto.email();
         this.password = dto.password();
@@ -103,7 +103,7 @@ public class User extends BaseTimeEntity {
         this.role = Role.USER;
     }
 
-    // OAuth2???앹꽦??
+    // OAuth2 회원가입 생성자
     public User(String email, String nickname, Role role, String provider, String providerId) {
         this.email = email;
         this.nickname = nickname;

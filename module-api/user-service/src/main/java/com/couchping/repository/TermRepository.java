@@ -12,9 +12,9 @@ import java.util.List;
 public interface TermRepository extends JpaRepository<Term, Long> {
     List<Term> findAllByActive(boolean active);
 
-    // ?꾩닔 ?쎄? 踰덊샇 ?뺤씤
+    // 필수 약관 번호 확인
     List<TermId> findAllByRequiredAndActive(boolean required, boolean active);
 
-    // 蹂듯빀????댄?, 踰꾩쟾)
+    // 복합키 (제목, 버전)
     // Term findByTitleAndVersion(String title, String version);
 }

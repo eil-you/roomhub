@@ -33,7 +33,7 @@ class ReservationServiceTest {
         private ReservationService reservationService;
 
         @Test
-        @DisplayName("??됰튋 ??밴쉐 ?源껊궗 (筌띲끉臾?疫꿸퀡以?")
+        @DisplayName("숙소 예약 생성 (성공)")
         void createReservation_Success() {
                 // given
                 ReservationRequest request = new ReservationRequest(1L, 1L, LocalDate.now(),
@@ -47,7 +47,7 @@ class ReservationServiceTest {
         }
 
         @Test
-        @DisplayName("??됰튋 ?띯뫁???源껊궗")
+        @DisplayName("숙소 예약 취소 (성공)")
         void cancelReservation_Success() {
                 // given
                 Long reservationId = 1L;
@@ -69,7 +69,7 @@ class ReservationServiceTest {
         }
 
         @Test
-        @DisplayName("?諭????덈꺖??筌뤴뫀諭???됰튋 ?띯뫁???源껊궗 (??덈꺖 ??????")
+        @DisplayName("숙소 삭제 시 모든 확정된 예약 취소 (성공)")
         void cancelAllByRoomId_Success() {
                 // given
                 Long roomId = 1L;
@@ -89,7 +89,7 @@ class ReservationServiceTest {
         }
 
         @Test
-        @DisplayName("????癒????됰튋 鈺곌퀬???源껊궗")
+        @DisplayName("유저별 예약 내역 조회")
         void getReservationsByUserId_Success() {
                 // given
                 Long userId = 1L;
@@ -111,4 +111,3 @@ class ReservationServiceTest {
                 assertEquals(userId, results.get(0).getUserId());
         }
 }
-

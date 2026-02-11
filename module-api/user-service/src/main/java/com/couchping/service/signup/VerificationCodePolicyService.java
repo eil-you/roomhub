@@ -10,12 +10,12 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor()
 public class VerificationCodePolicyService {
 
-    // ?몄쬆踰덊샇 ?щ컻??媛???щ? 寃??
+    // 인증번호 재발송 가능 여부 검사
     public boolean isResendableAllowd(Verification vc) {
         return vc.getSendTime().isBefore(LocalDateTime.now().minusMinutes(3));
     }
 
-    // ?몄쬆踰덊샇 (?쒓컙 寃??
+    // 인증번호 유효 시간 검사
     public boolean isVerificationCodeValid(Verification vc) {
 
         return vc.getSendTime().isAfter(LocalDateTime.now().minusMinutes(3));

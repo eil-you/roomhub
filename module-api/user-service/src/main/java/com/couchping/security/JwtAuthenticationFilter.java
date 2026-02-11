@@ -27,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String jwt = resolveToken(request);
 
         if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-            // 釉붾옓由ъ뒪???뺤씤
+            // 블랙리스트 확인
             String isBlackList = redisUtil.getData("BL:" + jwt);
             if (isBlackList == null) {
                 Authentication authentication = tokenProvider.getAuthentication(jwt);

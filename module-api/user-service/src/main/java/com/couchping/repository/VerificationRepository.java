@@ -9,9 +9,9 @@ import java.util.Optional;
 @Repository
 public interface VerificationRepository extends JpaRepository<Verification, Long> {
 
-    // ?몄쬆踰덊샇, ?꾩넚 ?쒓컙 ??議고쉶
+    // 휴대폰 번호로 인증 정보 조회
     Optional<Verification> findVerificationByPhoneNumber(String phoneNumber);
 
-    // ?대???踰덊샇, 肄붾뱶, ?ъ슜?щ?濡??쒓컙 議고쉶
+    // 휴대폰 번호와 사용 여부로 인증 정보 조회
     Optional<Verification> findVerificationByPhoneNumberAndUsed(String phoneNumber, boolean used);
 }

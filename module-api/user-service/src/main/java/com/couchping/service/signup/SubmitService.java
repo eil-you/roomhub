@@ -40,19 +40,19 @@ public class SubmitService {
     public void submit(SubmitRequest signupForm) {
         String phoneNumber = decryptPhoneNumber(signupForm.encryptedKey());
 
-        // ?袁れ넅甕곕뜇???紐꾩쵄 1??볦퍢 ??沅? ??곌퐬??餓λ쵎??筌ｋ똾寃?
+        // 1. 휴대폰 번호 복호화 및 유효성 검사
         isFormatValid(signupForm, phoneNumber);
 
-        // ?袁⑸땾 ??? 筌ｋ똾寃?
+        // 2. 필수 약관 동의 여부 확인
         if (!areRequiredTermsChecked(signupForm.termIds())) {
             throw new CouchPingException(UserErrorCode.REQUIRED_TERMS_CHECKED);
         }
 
-        // db????
+        // 3. User 및 Agreement 저장
         saveUserAndAgreement(signupForm, phoneNumber);
     }
 
-    // ???뵬沃섎챸苑?NOT NULL, ?醫륁뒞??野꺜筌?
+    // 휴대폰 번호, 이메일, 닉네임 유효성 검사
     public void isFormatValid(SubmitRequest signupForm, String phoneNumber) {
         // phoneNumber
         if (!isVerifiedPhoneNumber(phoneNumber)) {
@@ -70,17 +70,17 @@ public class SubmitService {
         }
     }
 
-    // ??곌퐬??鈺곕똻????? ?癒?뼊
+    // 닉네임 중복 확인
     public boolean isNicknameExist(String nickname) {
         return userRepository.findByNickname(nickname) != null;
     }
 
-    // ??李??鈺곕똻????? ?癒?뼊
+    // 이메일 중복 확인
     public boolean isEmailExist(String email) {
         return userRepository.findByEmail(email) != null;
     }
 
-    // ?袁れ넅甕곕뜇??癰귣벏???
+    // 휴대폰 번호 복호화
     public String decryptPhoneNumber(String encryptedKey) {
         try {
             return AES256Util.decrypt(secretKey, encryptedKey);
@@ -90,7 +90,7 @@ public class SubmitService {
     }
 
     /*
-     * ?紐꾩쵄????1??볦퍢 ??沅∽쭕??醫륁뒞
+     * 휴대폰 인증 여부 확인 (1시간 이내)
      */
     public boolean isVerifiedPhoneNumber(String phoneNumber) {
         boolean used = true;
@@ -101,18 +101,18 @@ public class SubmitService {
     }
 
     /*
-     * ?袁⑸땾 ??? 筌ｋ똾寃?
+     * 필수 약관 동의 여부 확인
      */
     public boolean areRequiredTermsChecked(List<TermId> userTerms) {
         List<TermId> requiredTerms = termRepository.findAllByRequiredAndActive(true, true);
         return userTerms != null && userTerms.containsAll(requiredTerms);
     }
 
-    /* ???뜚 揶쎛??db ????獄?agreement db ???? */
+    /* User 저장 및 Agreement 저장 */
     public void saveUserAndAgreement(SubmitRequest submitRequest, String phoneNumber) {
         User newUser = new User(submitRequest, phoneNumber);
 
-        // ??쑬? 甕곕뜇???酉???
+        // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(newUser.getPassword());
         newUser.setPassword(encodedPassword);
 
@@ -128,7 +128,7 @@ public class SubmitService {
     public void socialSubmit(String email, SocialSignupRequest socialSignupRequest) {
         String phoneNumber = decryptPhoneNumber(socialSignupRequest.encryptedKey());
 
-        // ??곌퐬??餓λ쵎??筌ｋ똾寃???野꺜筌?
+        // 닉네임 중복 체크
         if (isNicknameExist(socialSignupRequest.nickname())) {
             throw new CouchPingException(UserErrorCode.NICKNAME_IS_DUPLICATE);
         }
@@ -154,4 +154,3 @@ public class SubmitService {
         agreementRepository.saveAll(agreements);
     }
 }
-
