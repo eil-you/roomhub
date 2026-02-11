@@ -24,9 +24,9 @@ services:
     env_file:
       - .env
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/roomhub
-      SPRING_DATASOURCE_USERNAME: roomuser
-      SPRING_DATASOURCE_PASSWORD: roompass
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/couchping
+      SPRING_DATASOURCE_USERNAME: couchuser
+      SPRING_DATASOURCE_PASSWORD: couchpass
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
@@ -53,9 +53,9 @@ services:
     env_file:
       - .env
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/roomhub
-      SPRING_DATASOURCE_USERNAME: roomuser
-      SPRING_DATASOURCE_PASSWORD: roompass
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/couchping
+      SPRING_DATASOURCE_USERNAME: couchuser
+      SPRING_DATASOURCE_PASSWORD: couchpass
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       REDIS_HOST: redis
       REDIS_PORT: 6379
@@ -86,13 +86,13 @@ services:
     image: postgres:16-alpine
     restart: always
     environment:
-      POSTGRES_DB: roomhub
-      POSTGRES_USER: roomuser
-      POSTGRES_PASSWORD: roompass
+      POSTGRES_DB: couchping
+      POSTGRES_USER: couchuser
+      POSTGRES_PASSWORD: couchpass
     ports:
       - "5432:5432"
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U roomuser -d roomhub" ]
+      test: [ "CMD-SHELL", "pg_isready -U couchuser -d couchping" ]
       interval: 5s
       timeout: 5s
       retries: 5

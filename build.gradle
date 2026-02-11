@@ -5,11 +5,15 @@ plugins {
 }
 
 allprojects {
-    group = 'com.roomhub'
+    group = 'com.couchping'
     version = '0.0.1-SNAPSHOT'
 
     repositories {
         mavenCentral()
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
     }
 }
 

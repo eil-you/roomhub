@@ -1,0 +1,20 @@
+package com.couchping.repository;
+
+import com.couchping.entity.Term;
+import com.couchping.entity.TermId;
+import com.couchping.interfaces.TermIdOnly;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface TermRepository extends JpaRepository<Term, Long> {
+    List<Term> findAllByActive(boolean active);
+
+    // 필수 약관 번호 확인
+    List<TermId> findAllByRequiredAndActive(boolean required, boolean active);
+
+    // 복합키 (제목, 버전)
+    // Term findByTitleAndVersion(String title, String version);
+}

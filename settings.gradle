@@ -1,4 +1,4 @@
-rootProject.name = 'roomhub'
+rootProject.name = 'couchping'
 
 include 'module-common'
 include 'module-api:user-service'
